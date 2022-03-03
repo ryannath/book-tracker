@@ -1,0 +1,4 @@
+/*Technically qss, but hey syntax highlighting is great*/
+QMainWindow {
+    background: rgb(22, 22, 26);
+}
