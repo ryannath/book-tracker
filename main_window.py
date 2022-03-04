@@ -1,34 +1,46 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import (
-    QApplication, QMenu, QMainWindow, QWidget,
-    QHBoxLayout, QPushButton, QLineEdit,
-    QVBoxLayout)
+from PyQt6.QtWidgets import QMenu, QMainWindow, QWidget
 
 from functions.actions import openProfile, saveProfile
-
+from widgets.centre_widget import CentreWidget
 from typing import Dict
 from datastruct.book import Book
 
 class MainWindow(QMainWindow):
+    """Main UI of the program which users will interact with"""
+
+    # Attributes **************************************************************
     centralWidget: QWidget
     """Central widget of the main window"""
     openAction: QAction
+    """Action to open a saved profile through file menu in menubar"""
     saveAction: QAction
-    data: Dict[str, Book] = {}
+    """Action to save the current profile through 'file' menu in menubar"""
+    data: Dict[str, Book] = {}  # TODO: perhaps refactor, divide up the logic
+    """Holds the data of the current loaded profile"""
 
+    # *************************************************************************
+
+
+    # *************************************************************************
     def __init__(self, parent: QWidget = None) -> None:
         """Initialise main window"""
+
         super().__init__(parent)
         self.setWindowTitle("Book Tracker")
         self.resize(500, 500)
-        self.centralWidget = QWidget()
+
+        # TODO: refactor centralWidget  
+        self.centralWidget = CentreWidget()
         self.setCentralWidget(self.centralWidget)
+
+        # Initialise actions and the menu bar
         self._createActions()
         self._createMenuBar()
 
 
     def loadStyle(self, path: str) -> None:
+        """Applies all styling from given file"""
         with open(path, 'r') as f:
             self.setStyleSheet(f.read())
         
@@ -42,47 +54,18 @@ class MainWindow(QMainWindow):
         self.saveAction = QAction("&Save As", self)
         self.saveAction.setShortcut("Ctrl+S")
         self.saveAction.setStatusTip("Save the current user profile history")
+        # Need to send 'data' stored in this object
+        # to be saved using saveProfile
         self.saveAction.triggered.connect(lambda : saveProfile(self.data))
-        
+
+
     def _createMenuBar(self) -> None:
+        # QMainWindow already defines a menuBar, simply access it using
+        # the method
         menuBar = self.menuBar()
+
+        # one menuBar contains several menus, here initialise a 'File' menu
         fileMenu = QMenu("File", self)
         fileMenu.addAction(self.openAction)
         fileMenu.addAction(self.saveAction)
         menuBar.addMenu(fileMenu)
-
-
-    def createUI(self) -> None:
-        
-        self.path = QLineEdit()
-        self.label1.setPlaceholderText("Select save file")
-        button1 = QPushButton("Browse")
-        self.label2 = QLineEdit("Yeet")
-        button2 = QPushButton("Browse")
-        button1.clicked.connect(self.browseFile)
-        layout1 = QHBoxLayout()
-        layout2 = QHBoxLayout()
-
-        layout1.addWidget(self.label1)
-        layout1.addWidget(button1)
-
-        layout2.addWidget(self.label2)
-        layout2.addWidget(button2)
-        bigLayout = QVBoxLayout()
-        bigLayout.addLayout(layout1)
-        bigLayout.addLayout(layout2)
-        bigLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        self.widget = QWidget()
-        self.widget.setLayout(bigLayout)
-        self.setCentralWidget(self.widget)
-    
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    # window.loadStyle("styles/main-window.css")
-    window.show()
-    sys.exit(app.exec())
