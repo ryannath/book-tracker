@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
     centralWidget: QWidget
     """Central widget of the main window"""
     openAction: QAction
-    """Action to open a saved profile through file menu in menubar"""
+    """Action to open a saved profile through 'file' menu in menubar"""
     saveAction: QAction
     """Action to save the current profile through 'file' menu in menubar"""
     data: Dict[str, Book] = {}  # TODO: perhaps refactor, divide up the logic
@@ -30,7 +30,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Book Tracker")
         self.resize(500, 500)
 
-        # TODO: refactor centralWidget  
         self.centralWidget = CentreWidget()
         self.setCentralWidget(self.centralWidget)
 
@@ -54,6 +53,7 @@ class MainWindow(QMainWindow):
         self.saveAction = QAction("&Save As", self)
         self.saveAction.setShortcut("Ctrl+S")
         self.saveAction.setStatusTip("Save the current user profile history")
+
         # Need to send 'data' stored in this object
         # to be saved using saveProfile
         self.saveAction.triggered.connect(lambda : saveProfile(self.data))
