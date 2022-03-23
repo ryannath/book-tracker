@@ -1,4 +1,15 @@
 /*Technically qss, but hey syntax highlighting is great*/
-QMainWindow {
+/* QMainWindow {
     background: rgb(22, 22, 26);
+} */
+
+.BookEntry {
+  background: #fff;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+QLabel[cssClass="BookTitle"] {
+  font-size: 18px;
+  font-weight: 800;
 }
