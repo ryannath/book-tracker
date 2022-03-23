@@ -6,6 +6,6 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     window = MainWindow()
-    # window.loadStyle("styles/main-window.css")
+    window.loadStyle("styles/main-window.css")
     window.show()
     sys.exit(app.exec())
