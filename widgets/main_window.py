@@ -18,6 +18,8 @@ class MainWindow(QMainWindow):
     """Action to save the current profile through 'file' menu in menubar"""
     data: Dict[str, Book] = {}  # TODO: perhaps refactor, divide up the logic
     """Holds the data of the current loaded profile"""
+    stylePath: str
+    """ Path to the currently applied stylesheet """
 
     # *************************************************************************
 
@@ -41,7 +43,8 @@ class MainWindow(QMainWindow):
     def loadStyle(self, path: str) -> None:
         """Applies all styling from given file"""
         with open(path, 'r') as f:
-            self.setStyleSheet(f.read())
+            self.stylePath = f.read()
+            self.setStyleSheet(self.stylePath)
         
     
     def _createActions(self) -> None:
