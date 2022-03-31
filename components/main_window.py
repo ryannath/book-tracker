@@ -1,9 +1,9 @@
-from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QMenu, QMainWindow, QWidget
+import pickle
+from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtWidgets import QMenu, QMainWindow, QWidget, QFileDialog
+from components.centre_widget import CentreWidget
+from typing import Dict, Optional
 
-from functions.actions import openProfile, saveProfile
-from widgets.centre_widget import CentreWidget
-from typing import Dict
 from datastruct.book import Book
 
 class MainWindow(QMainWindow):
@@ -18,13 +18,11 @@ class MainWindow(QMainWindow):
     """Action to save the current profile through 'file' menu in menubar"""
     data: Dict[str, Book] = {}  # TODO: perhaps refactor, divide up the logic
     """Holds the data of the current loaded profile"""
-    stylePath: str
-    """ Path to the currently applied stylesheet """
 
     # *************************************************************************
 
 
-    # *************************************************************************
+    # Methods *****************************************************************
     def __init__(self, parent: QWidget = None) -> None:
         """Initialise main window"""
 
@@ -38,6 +36,7 @@ class MainWindow(QMainWindow):
         # Initialise actions and the menu bar
         self._createActions()
         self._createMenuBar()
+        self.setWindowIcon(QIcon("resources/image/book tracker logo.svg"))
 
 
     def loadStyle(self, path: str) -> None:
@@ -51,7 +50,7 @@ class MainWindow(QMainWindow):
         self.openAction = QAction("&Open File...", self)
         self.openAction.setShortcut("Ctrl+O")
         self.openAction.setStatusTip("Open a user profile history")
-        self.openAction.triggered.connect(openProfile)
+        self.openAction.triggered.connect(self.openProfile)
 
         self.saveAction = QAction("&Save As", self)
         self.saveAction.setShortcut("Ctrl+S")
@@ -59,7 +58,7 @@ class MainWindow(QMainWindow):
 
         # Need to send 'data' stored in this object
         # to be saved using saveProfile
-        self.saveAction.triggered.connect(lambda : saveProfile(self.data))
+        self.saveAction.triggered.connect(self.saveProfile)
 
 
     def _createMenuBar(self) -> None:
@@ -72,3 +71,17 @@ class MainWindow(QMainWindow):
         fileMenu.addAction(self.openAction)
         fileMenu.addAction(self.saveAction)
         menuBar.addMenu(fileMenu)
+
+
+    def openProfile(self) -> None:
+        name = QFileDialog.getOpenFileName(caption="Open File", filter="Profile Files (*.bt)")[0]
+        if name:
+            with open(name, "rb") as f:
+                self.data = pickle.load(f)
+                print(self.data)
+
+    def saveProfile(self) -> None:
+        name = QFileDialog.getSaveFileName(caption="Save As", filter="Profile Files (*.bt)")[0]
+        if name:
+            with open(name, "wb") as f:
+                pickle.dump(self.data, f)
