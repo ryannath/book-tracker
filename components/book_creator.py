@@ -34,10 +34,15 @@ class BookCreator(QWidget):
         success = bookCreator.exec()
 
         if (BookCreatorDialog.DialogCode.Accepted == success):
-            self.bookTitle = bookCreator.bookTitle.text()
-            self.bookAuthor = bookCreator.bookAuthor.text()
-            self.bookPage = bookCreator.bookPage.text()
-            self.bookRating = bookCreator.bookRating.text()
+            if (bookCreator.bookTitle.text()):
+                self.bookTitle = bookCreator.bookTitle.text()
+            if (bookCreator.bookAuthor.text()):
+                self.bookAuthor = bookCreator.bookAuthor.text()
+            if (bookCreator.bookPage.text()):
+                self.bookPage = bookCreator.bookPage.text()
+            if (bookCreator.bookRating.text()):
+                self.bookRating = bookCreator.bookRating.text()
+
             self.createBook()
             self.created.emit()
         
