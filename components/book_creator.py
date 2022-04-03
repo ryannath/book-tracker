@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QWidget
 
 from components.book_creator_dialog import BookCreatorDialog
 from components.book_entry import BookEntry
+from datastruct.book import Book
 
 class BookCreator(QWidget):
     created = pyqtSignal()
@@ -17,7 +18,7 @@ class BookCreator(QWidget):
         self.bookRating = 0
         self.newBook = None
 
-    def _reset(self):
+    def reset(self):
         self.bookTitle = "Unknown Book"
         self.bookAuthor = "Unknown"
         self.picturePath = "resources/image/Book.png"
@@ -25,9 +26,11 @@ class BookCreator(QWidget):
         self.bookRating = 0
         self.newBook = None
 
-    def createBook(self):
-        self.newBook = BookEntry(None, self.bookTitle, self.bookAuthor, self.picturePath, self.bookPage, self.bookRating)
-
+    def createBook(self, book:Book=None):
+        if not book:
+            self.newBook = BookEntry(self.bookTitle, self.bookAuthor, self.picturePath, self.bookPage, self.bookRating)
+        else:
+            self.newBook = BookEntry(book)
 
     def launch_creator(self):
         bookCreator = BookCreatorDialog()
@@ -46,5 +49,5 @@ class BookCreator(QWidget):
             self.createBook()
             self.created.emit()
         
-        self._reset()
+        self.reset()
     

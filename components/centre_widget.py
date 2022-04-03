@@ -1,8 +1,5 @@
 from typing import Optional
 from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QSizePolicy, QGridLayout, QHBoxLayout
-from PyQt6.QtCore import Qt
-
-from components.book_creator import BookCreator
 from components.book_entry import BookEntry
 
 class CentreWidget(QWidget):
@@ -10,12 +7,14 @@ class CentreWidget(QWidget):
     def __init__(self, parent: Optional[QWidget]=None) -> None:
         super().__init__(parent)
         self._createUI()
-        self.creator = BookCreator()
-        self.newBookButton.clicked.connect(self.creator.launch_creator)
-        self.creator.created.connect(self.addBook)
 
-    def addBook(self):
-        self.contentLayout.addWidget(self.creator.newBook)
+    def addBook(self, bookEntry: BookEntry):
+        if self.j < 2:
+            self.contentLayout.addWidget(bookEntry, self.j, self.i)
+            self.i += 1
+            if self.i > 2:
+                self.j += 1
+                self.i = 0
 
     def _createUI(self) -> None:
         # The controls above the grid of books
@@ -38,6 +37,8 @@ class CentreWidget(QWidget):
 
         # The grid of books, main content
         self.contentLayout = QGridLayout()
+        self.i = 0
+        self.j = 0
 
         # Adds a stretch of i to column index 2
         self.contentLayout.setColumnStretch(3, 1)

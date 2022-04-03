@@ -3,6 +3,8 @@ from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import QMenu, QMainWindow, QWidget, QFileDialog
 from components.centre_widget import CentreWidget
 from typing import Dict, Optional
+from components.book_creator import BookCreator
+
 
 from datastruct.book import Book
 
@@ -32,11 +34,22 @@ class MainWindow(QMainWindow):
 
         self.centralWidget = CentreWidget()
         self.setCentralWidget(self.centralWidget)
+        self.creator = BookCreator()
+        self.centralWidget.newBookButton.clicked.connect(self.creator.launch_creator)
+        self.creator.created.connect(self.addBook)
 
+        self._loadRecent()
         # Initialise actions and the menu bar
         self._createActions()
         self._createMenuBar()
         self.setWindowIcon(QIcon("resources/image/book tracker logo.svg"))
+
+
+    def addBook(self):
+        newBook = self.creator.newBook.toBook()
+        self.data[newBook.title] = newBook
+        self.centralWidget.addBook(self.creator.newBook)
+        print(self.data)
 
 
     def loadStyle(self, path: str) -> None:
@@ -45,7 +58,20 @@ class MainWindow(QMainWindow):
             self.stylePath = f.read()
             self.setStyleSheet(self.stylePath)
         
-    
+    def _loadRecent(self):
+        try:
+            with open("saves/.recent", "rb") as f:
+                profilePath = f.read()
+                with open(profilePath, "rb") as f:
+                    self.data = pickle.load(f)
+                    print(self.data)
+                for entry in self.data.values():
+                    self.creator.createBook(entry)
+                    self.centralWidget.addBook(self.creator.newBook)
+
+        except Exception as e:
+            print(e)
+
     def _createActions(self) -> None:
         self.openAction = QAction("&Open File...", self)
         self.openAction.setShortcut("Ctrl+O")
@@ -79,9 +105,15 @@ class MainWindow(QMainWindow):
             with open(name, "rb") as f:
                 self.data = pickle.load(f)
                 print(self.data)
+            with open("saves/.recent", "w") as f:
+                f.write(name)
 
     def saveProfile(self) -> None:
         name = QFileDialog.getSaveFileName(caption="Save As", filter="Profile Files (*.bt)")[0]
         if name:
             with open(name, "wb") as f:
                 pickle.dump(self.data, f)
+            with open("saves/.recent", "w") as f:
+                f.write(name)
+        
+    
