@@ -1,6 +1,8 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QFrame, QSizePolicy, QLineEdit, QInputDialog
 from PyQt6.QtGui import QPixmap, QPainter, QBrush, QPen
+from datastruct.book import Book
+from typing import overload
 
 class BookEntry(QFrame):
     """
@@ -17,14 +19,24 @@ class BookEntry(QFrame):
     bookRating: QLabel
     """ Label that displays the rating of the book """
 
+    @overload
+    def __init__(self, book: Book) -> None : ...
+    @overload
+    def __init__(self, title:str, author: str, picturePath: str, page: int, rating: int) -> None : ...
 
     def __init__(
-        self, parent: QWidget=None, title: str = "Unknown Book",
-        author: str = "Unknown", picturePath: str = "resources/image/Book.png",
-        page: int = 0, rating: int = 0
+        self, a0 = "Unknown Book",
+        a1 = "Unknown", a2: str = "resources/image/Book.png",
+        a3: int = 0, a4: int = 0
         ):
-        super().__init__(parent)
-        self._createUI(title, author, picturePath, page, rating)
+
+        super().__init__()
+        if (isinstance(a0, Book)):
+            a0 : Book
+            self._createUI(a0.title, a0.author, a2, a0.page, a0.rating)
+        else:
+            self._createUI(a0, a1, a2, a3, a4)
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         
     
     def _createUI(self, title, author, picturePath, page, rating):
@@ -44,6 +56,7 @@ class BookEntry(QFrame):
         layout = QHBoxLayout()
         bookAuthorLabel = QLabel("By ")
         bookAuthor = QLabel(author)
+        self.bookAuthorInput = bookAuthor
         layout.addWidget(bookAuthorLabel)
         layout.addWidget(bookAuthor)
         layout.setContentsMargins(0,0,0,0)
@@ -55,6 +68,7 @@ class BookEntry(QFrame):
         layout = QHBoxLayout()
         bookPageLabel = QLabel("Page: ")
         bookPage = QLabel(str(page))
+        self.bookPageInput = bookPage
         layout.addWidget(bookPageLabel)
         layout.addWidget(bookPage)
         layout.setContentsMargins(0,0,0,0)
@@ -65,6 +79,7 @@ class BookEntry(QFrame):
         layout = QHBoxLayout()
         bookRatingLabel = QLabel("Rating: ")
         bookRating = QLabel(str(rating))
+        self.bookRatingInput = bookRating
         layout.addWidget(bookRatingLabel)
         layout.addWidget(bookRating)
         layout.setContentsMargins(0,0,0,0)
@@ -86,3 +101,9 @@ class BookEntry(QFrame):
 
         layout.addWidget(content)
         self.setLayout(layout)
+    
+    def toBook(self):
+        return Book(
+                self.bookTitle.text(), self.bookAuthorInput.text(),
+                int(self.bookPageInput.text()), int(self.bookRatingInput.text())
+                )
