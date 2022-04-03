@@ -37,7 +37,6 @@ class BookEntry(QFrame):
         else:
             self._createUI(a0, a1, a2, a3, a4)
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        
     
     def _createUI(self, title, author, picturePath, page, rating):
         # Title of the book

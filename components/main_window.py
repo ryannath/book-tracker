@@ -45,8 +45,6 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon("resources/image/book tracker logo.svg"))
 
 
-
-
     def addBook(self):
         newBook = self.creator.newBook.toBook()
         self.data[newBook.title] = newBook

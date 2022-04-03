@@ -1,6 +1,5 @@
 from typing import Optional
 from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QSizePolicy, QGridLayout, QHBoxLayout
-
 from components.book_entry import BookEntry
 
 class CentreWidget(QWidget):
